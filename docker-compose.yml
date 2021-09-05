@@ -1,0 +1,47 @@
+version: '2'
+
+services:
+  wordpress:
+    image: wordpress
+    environment:
+      - WORDPRESS_DB_HOST=database
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_DB_PASSWORD=C8aouSKnyPUV0l0u
+      - WORDPRESS_DB_USER=wordpress
+    ports:
+      - "127.0.0.127:8080:80"
+    volumes:
+      - ./plugins:/var/www/html/wp-content/plugins
+      - wordpress:/var/www/html
+    depends_on:
+      - database
+  database:
+    image: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=ZqJNzcQNuahnCY1n
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_PASSWORD=C8aouSKnyPUV0l0u
+      - MYSQL_USER=wordpress
+  cli:
+    image: wordpress:cli
+    user: "33:33"
+    depends_on:
+      - database
+      - wordpress
+    environment:
+      - WORDPRESS_DB_HOST=database
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_DB_PASSWORD=C8aouSKnyPUV0l0u
+      - WORDPRESS_DB_USER=wordpress
+    command: >
+      bash -c "/bin/sleep 30 && 
+               /usr/local/bin/wp core install --path=/var/www/html \
+                                              --url=http://127.0.0.127:8080 \
+                                              --title=\"WordPress Development\" \
+                                              --admin_user=admin \
+                                              --admin_password=9YyO0T9sPqGplvL0 \
+                                              --admin_email=admin@example.com"
+    volumes:
+      - wordpress:/var/www/html
+volumes:
+  wordpress:
